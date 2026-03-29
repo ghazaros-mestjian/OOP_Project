@@ -1,5 +1,6 @@
-public class board {
-    public static void main(String[] args) {
-        System.out.println("Hello!!");
-    }
+public class Board {
+	public static void main(String[] args) {
+		System.out.println("Hello!!");
+		// just for testing
+	}
 }
