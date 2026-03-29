@@ -1,0 +1,17 @@
+Our project consists of two classes by now: Piece and Board.
+
+Piece:
+The class that represets a game piece only, regardless of the board.
+It has two instance variables for its coordinates and methods to move it and access them.
+Maybe the methods will be made static for convinience later (or added new ones).
+
+Board:
+The class for two-player configuration.
+Includes instance variables for the dimensions, wall configuration and players's pieces.
+It has two private helper methods for checking a cell's position and an existance of a wall between some cells.
+
+
+Both clases have got their constructors.
+
+
+Everything we made by now is the very beginning. We will add/modify our code as we progress.
