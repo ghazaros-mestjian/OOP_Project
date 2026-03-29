@@ -8,7 +8,6 @@ public class Board {
 
 	Piece piece1;
 	Piece piece2;
-	// hly vor esqany
 
 	public Board() {
 		horizontalWalls = new boolean[HEIGHT - 1][WIDTH];
