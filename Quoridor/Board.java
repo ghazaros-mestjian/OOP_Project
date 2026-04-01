@@ -6,8 +6,8 @@ public class Board {
 	private boolean[][] horizontalWalls;
 	private boolean[][] verticalWalls;
 
-	Piece piece1;
-	Piece piece2;
+	private Piece piece1;
+	private Piece piece2;
 
 	public Board() {
 		horizontalWalls = new boolean[HEIGHT - 1][WIDTH];
@@ -17,12 +17,12 @@ public class Board {
 		piece2 = new Piece(HEIGHT - 1, WIDTH / 2);
 	}
 
-	private boolean checkCell(int x, int y) {
+	private boolean onBoard(int x, int y) {
 		return (0 <= x && x < HEIGHT && 0 <= y && y < WIDTH);
 	}
 
 	private boolean checkWall(int x1, int y1, int x2, int y2) {
-		if (!checkCell(x1, y1) || !checkCell(x2, y2)) {
+		if (!onBoard(x1, y1) || !onBoard(x2, y2)) {
 			// or some error
 			return false;
 		}
@@ -35,5 +35,6 @@ public class Board {
 		else
 			return horizontalWalls[Math.min(x1, x2)][y1];
 	}
+
 
 }
