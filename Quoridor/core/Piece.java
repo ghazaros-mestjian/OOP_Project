@@ -1,3 +1,5 @@
+package core;
+
 public class Piece {
 	private int heightCoordinate;
 	private int widthCoordinate;

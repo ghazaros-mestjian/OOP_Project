@@ -1,3 +1,5 @@
+package core;
+
 public class Board {
 	// constants
 	private static final int HEIGHT = 9;
@@ -17,9 +19,12 @@ public class Board {
 		piece2 = new Piece(HEIGHT - 1, WIDTH / 2);
 	}
 
-	private boolean onBoard(int x, int y) {
+	protected static boolean onBoard(int x, int y) {
 		return (0 <= x && x < HEIGHT && 0 <= y && y < WIDTH);
 	}
+    protected static boolean onBoard(int x, int y, boolean isVertical) {
+        return (0 <= x && x < HEIGHT && 0 <= y && y < WIDTH);
+    }
 
 	private boolean checkWall(int x1, int y1, int x2, int y2) {
 		if (!onBoard(x1, y1) || !onBoard(x2, y2)) {
@@ -42,15 +47,15 @@ public class Board {
             {0, 1},
             {0, -1}
     };
-    private void hasPath (int x, int y, boolean[][] isVisited) {
+    private void dfs(int x, int y, boolean[][] isVisited) {
         isVisited[x][y] = true;
 
         for (int[] d : directions) {
             int nx = d[0] + x;
             int ny = d[1] + y;
 
-            if(!(checkWall(x, y, nx, ny)))
-                hasPath(nx, ny, isVisited);
+            if(!(checkWall(x, y, nx, ny)) && !isVisited[nx][ny])
+                dfs(nx, ny, isVisited);
         }
     }
 
@@ -67,9 +72,9 @@ public class Board {
         }
 
         boolean[][] isVisited1 = new boolean[HEIGHT][WIDTH];
-        hasPath(piece1.getHeightCoordinate(), piece1.getWidthCoordinate(), isVisited1);
+        dfs(piece1.getHeightCoordinate(), piece1.getWidthCoordinate(), isVisited1);
         boolean[][] isVisited2 = new boolean[HEIGHT][WIDTH];
-        hasPath(piece2.getHeightCoordinate(), piece2.getWidthCoordinate(), isVisited2);
+        dfs(piece2.getHeightCoordinate(), piece2.getWidthCoordinate(), isVisited2);
 
         boolean flag1 = false;
         boolean flag2 = false;
@@ -89,4 +94,3 @@ public class Board {
         }
     }
 }
-
