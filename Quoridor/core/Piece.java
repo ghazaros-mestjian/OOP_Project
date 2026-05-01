@@ -1,40 +1,29 @@
 package core;
 
 public class Piece {
-	private int heightCoordinate;
-	private int widthCoordinate;
+	private int x;
+	private int y;
 
 	public Piece() {
-		heightCoordinate = 0;
-		widthCoordinate = 0;
+		x = 0;
+		y = 0;
 	}
 
-	public Piece(int heightCoordinate, int widthCoordinate) {
-		this.heightCoordinate = heightCoordinate;
-		this.widthCoordinate = widthCoordinate;
+	public Piece(int x, int y) {
+		this.x = x;
+		this.y = y;
 	}
 
-	public void moveUp() {
-		heightCoordinate--;
+	public void move(Direction direction) {
+		x += direction.dx;
+		y += direction.dy;
 	}
 
-	public void moveDown() {
-		heightCoordinate++;
+	public int getX() {
+		return x;
 	}
 
-	public void moveLeft() {
-		widthCoordinate--;
-	}
-
-	public void moveRight() {
-		widthCoordinate++;
-	}
-
-	public int getHeightCoordinate() {
-		return heightCoordinate;
-	}
-
-	public int getWidthCoordinate() {
-		return widthCoordinate;
+	public int getY() {
+		return y;
 	}
 }

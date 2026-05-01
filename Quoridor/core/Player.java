@@ -1,14 +1,30 @@
 package core;
 
 public abstract class Player {
+	private Piece piece;
+	private int wallCount;
 
-    private int wallCount = 10;
-    private Piece piece;
+	public Player() {
+		Piece = new Piece();
+		wallCount = 10;
+	}
 
-    public boolean make(Step st) {
-        if(st.isWall)
-            Board.setWall(st.x, st.y, st.isVertical);
-        else
-            piece.move(st.direction);
-    }
+	public Player(int x, int y) {
+		Piece = new Piece(x, y);
+		wallCount = 10;
+	}
+
+	public boolean perform(Action action) {
+		if (action instanceof StepAction) {
+			StepAction stepAction = (StepAction) action;
+			piece.move(stepAction.getDirection());
+		}
+		else if (action instanceof WallAction) {
+			WallAction wallAction = (WallAction) action;
+			Board.placeWall(wallAction.getWall());
+		}
+		else {
+			System.exit(0); // to be finished
+		}
+	}
 }
