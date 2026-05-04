@@ -3,3 +3,11 @@ public enum
 action package
 
 wall class
+
+random or math.random
+
+board dfs for exceptions
+
+how to initialize humanplayers
+
+exception for wall and step and action

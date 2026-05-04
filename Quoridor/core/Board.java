@@ -37,7 +37,7 @@ public class Board {
 			return horizontalWalls[Math.min(x1, x2)][y1];
 	}
 
-	public boolean[][] dfs(int x, int y) {
+	public boolean[][] dfs(Player[] players) {
 		if (!onBoard(x, y)) return null;
 
 		boolean[][] used = new boolean[HEIGHT][WIDTH];

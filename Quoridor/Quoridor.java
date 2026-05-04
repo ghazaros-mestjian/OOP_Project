@@ -1,77 +1,75 @@
 public class Quoridor {
-	public Step(String format) {
-		String[] parts = format.trim().split(" ");
-		if (parts.length == 1) {
-			switch (parts[0]) {
-				case "up":
-					direction = 1;
-				case "down":
-					direction = 2;
-				case "right":
-					direction = 3;
-				case "left":
-					direction = 4;
-				default:
-					break;
+	private Board board;
+	private Player[] players;
+
+	private static final char vWall = '|';
+	private static final char hWall = '\u2014';
+	private static final char emptyCell = '\u00B7';
+
+	public Quoridor(int playerCount) throws PlayerCountException {
+		if (playerCount != 2 || playerCount != 4)
+			throw new PlayerCountException("Wrong number of players: " + playerCount + ".");
+		
+		board = new Board();
+		players = new Player[playerCount];
+
+		players[0] = new HumanPlayer(Board.HEIGHT - 1, Board.WIDTH / 2, Direction.UP);
+		players[1] = new HumanPlayer(0, Board.WIDTH / 2, Direction.DOWN);
+		
+		if (playerCount == 4) {
+			players[2] = new HumanPlayer(Board.HEIGHT / 2, 0, Direction.LEFT);
+			players[3] = new HumanPlayer(Board.HEIGHT / 2, Board.WIDTH - 1, Direction.RIGHT);
+		}
+	}
+
+	public void print() {
+		char[][] layout = new char[Board.HEIGHT * 2 - 1][Board.WIDTH * 2 - 1];
+
+		for (int i = 0; i < Board.HEIGHT * 2 - 1; i++) {
+			if (i % 2) {
+				for (j = 0; j < Board.WIDTH * 2 - 1; j++) {
+					if (j % 2) layout[i][j] = ' ';
+					else layout[i][j] = (Board.checkWall(i / 2, j / 2, i / 2 + 1, j / 2) ? hWall : ' ');
+				}
 			}
-			isWall = false;
-		} else if (parts.length == 4) {
-			if (!(parts[0].equals("wall")))
-				return;
-			switch (parts[1]) {
-				case "v":
-					isVertical = true;
-				case "h":
-					isVertical = false;
-				default:
-					break; // throw
+			else {
+				for (j = 0; j < Board.WIDTH * 2 - 1; j++) {
+					if (j % 2) layout[i][j] = (Board.checkWall(i / 2, j / 2, i / 2, j / 2 + 1) ? vWall : ' ');
+					else layout[i][j] = emptyCell;
+				}
 			}
-
-			x = Integer.parseInt(parts[2]);
-			y = Integer.parseInt(parts[3]);
-
-			if (!Board.onBoard(x, y, isVertical))
-				x = x + 9 - 9; // throw exception
-
-		} else {
-			x=x;
-			//throw exception
 		}
 
+		for (Player p : players)
+			layout[p.getX() * 2][p.getY() * 2] = p.getDirection().name().charAt(0);
+		
+		for (char[] row : layout) {
+			for (char c : row)
+				System.out.print(c);
+			System.out.println();
+		}
+	}
+
+	public static void main(String[] args) {
+		if (args.length != 1) {
+			System.out.println("Usage: java quoridor.Quoridor.java NumberOfPlayers.");
+			return;
+		}
+
+		Quoridor quoridor;
+		try {
+			int playerCount = Integer.parseInt(args[0]);
+			quoridor = new Quoridor(playerCount);
+		} catch (NumberFormatException e) {
+			System.out.println("The number of players should be an integer.");
+			return;
+		} catch (PlayerCountException e) {
+			System.out.println(e.getMessage());
+			return;
+		}
+
+		while (true) {
+
+		}
 	}
 }
-
-public void canPlaceWall(int x, int y, boolean isVertical) {
-		// paty drecinq
-		if (isVertical) {
-			if (verticalWalls[x][y])
-				return;
-			verticalWalls[x][y] = true;
-		} else {
-			if (horizontalWalls[x][y])
-				return;
-			horizontalWalls[x][y] = true;
-		}
-
-		boolean[][] isVisited1 = new boolean[HEIGHT][WIDTH];
-		dfs(piece1.getHeightCoordinate(), piece1.getWidthCoordinate(), isVisited1);
-		boolean[][] isVisited2 = new boolean[HEIGHT][WIDTH];
-		dfs(piece2.getHeightCoordinate(), piece2.getWidthCoordinate(), isVisited2);
-
-		boolean flag1 = false;
-		boolean flag2 = false;
-		for (int i = 0; i < WIDTH; i++) {
-			if (isVisited1[HEIGHT-1][i])
-				flag1 = true;
-			if (isVisited2[0][i])
-				flag2 = true;
-		}
-
-		if (!flag1 || !flag2) {
-			//paty hanum enq
-			if (isVertical)
-				verticalWalls[x][y] = false;
-			else
-				horizontalWalls[x][y] = false;
-		}
-	}

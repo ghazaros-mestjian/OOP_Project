@@ -1,9 +1,9 @@
 package core;
 
 public class WallAction implements Action {
-	Wall wall;
+	private Wall wall;
 
-	public PlaceWall(Wall wall) {
+	public WallAction(Wall wall) {
 		this.wall = wall;
 	}
 
