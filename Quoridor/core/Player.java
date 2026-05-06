@@ -1,59 +1,47 @@
 package core;
 
 public abstract class Player {
-	private Piece piece;
-	private int wallCount;
-	private Direction direction;
-
-	public Player() {
-		piece = new Piece();
-		wallCount = 10;
-	}
-
+	private final Piece piece;
+	private final Direction direction;
+	protected int wallCount; // access modifier?
+	
 	public Player(int x, int y, Direction direction) {
-		piece = new Piece(x, y);
-		wallCount = 10;
+		this.piece = new Piece(x, y);
 		this.direction = direction;
+		this.wallCount = 10;
 	}
-
+	
 	public int getX() {
 		return piece.getX();
 	}
-
+	
 	public int getY() {
 		return piece.getY();
 	}
-
+	
 	public Direction getDirection() {
 		return direction;
 	}
 	
-	public boolean perform(Action action) {
-		if (action instanceof StepAction) {
-			StepAction stepAction = (StepAction) action;
+	public void perform(Action action) throws IllegalActionException {
+		if (action instanceof StepAction) { // check via getActioin() ?
+			StepAction stepAction = (StepAction)action;
 			piece.move(stepAction.getDirection());
 		}
 		else if (action instanceof WallAction) {
-			WallAction wallAction = (WallAction) action;
+			if (wallCount == 0) throw new IllegalActionException("Cannot place a wall: not enough walls.");
+			WallAction wallAction = (WallAction)action;
 			Board.placeWall(wallAction.getWall());
 		}
-		else {
-			System.exit(0); // to be finished
-		}
-        return true;
+		else throw new IllegalActionException("Action is not a step- or wall-action.");
 	}
-
+	
 	public boolean hasWon() {
-		switch (direction) {
-			case UP:
-				return piece.getX() == 0;
-			case DOWN:
-				return piece.getX() == Board.HEIGHT - 1;
-			case LEFT:
-				return piece.getY() == 0;
-			case RIGHT:
-				return piece.getY() == Board.WIDTH - 1;
-		}
-        return true; //to be removed
+		return switch (direction) {
+			case UP -> piece.getX() == 0;
+			case DOWN -> piece.getX() == Board.HEIGHT - 1;
+			case LEFT -> piece.getY() == 0;
+			case RIGHT -> piece.getY() == Board.WIDTH - 1;
+		};
 	}
 }
