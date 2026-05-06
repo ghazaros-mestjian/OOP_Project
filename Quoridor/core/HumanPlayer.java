@@ -5,7 +5,7 @@ public class HumanPlayer extends Player {
 		super();
 	}
 
-	public HumanPlayer(int x, int y) {
-		super(x, y);
+	public HumanPlayer(int x, int y, Direction direction) {
+		super(x, y, direction);
 	}
 }

@@ -1,6 +1,6 @@
-package quoridor.core;
+package core;
 
-class ActionFormatException extends Exception {
+public class ActionFormatException extends Exception {
 	public ActionFormatException() {
 		super("Wrong action format.");
 	}

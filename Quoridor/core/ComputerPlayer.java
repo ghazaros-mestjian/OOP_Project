@@ -7,8 +7,8 @@ public class ComputerPlayer extends Player {
 		super();
 	}
 
-	public ComputerPlayer(int x, int y) {
-		super(x, y);
+	public ComputerPlayer(int x, int y, Direction direction) {
+		super(x, y, direction);
 	}
 
 	public Action randomAction() {

@@ -1,3 +1,5 @@
+package core;
+
 public enum Direction {
 	UP (-1, 0),
 	DOWN (1, 0),
@@ -12,7 +14,7 @@ public enum Direction {
 		this.dy = dy;
 	}
 
-	public static Direction(String format) {
+	public static Direction makeDirection(String format) throws ActionFormatException {
 		switch (format.trim()) {
 			case "up":
 				return UP;

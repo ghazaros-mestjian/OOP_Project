@@ -1,5 +1,7 @@
+import core.*;
+import java.util.Scanner;
+
 public class Quoridor {
-	private Board board;
 	private Player[] players;
 
 	private static final char vWall = '|';
@@ -7,10 +9,9 @@ public class Quoridor {
 	private static final char emptyCell = '\u00B7';
 
 	public Quoridor(int playerCount) throws PlayerCountException {
-		if (playerCount != 2 || playerCount != 4)
+		if (playerCount != 2 && playerCount != 4)
 			throw new PlayerCountException("Wrong number of players: " + playerCount + ".");
-		
-		board = new Board();
+
 		players = new Player[playerCount];
 
 		players[0] = new HumanPlayer(Board.HEIGHT - 1, Board.WIDTH / 2, Direction.UP);
@@ -26,15 +27,15 @@ public class Quoridor {
 		char[][] layout = new char[Board.HEIGHT * 2 - 1][Board.WIDTH * 2 - 1];
 
 		for (int i = 0; i < Board.HEIGHT * 2 - 1; i++) {
-			if (i % 2) {
-				for (j = 0; j < Board.WIDTH * 2 - 1; j++) {
-					if (j % 2) layout[i][j] = ' ';
+			if (i % 2 != 0) {
+				for (int j = 0; j < Board.WIDTH * 2 - 1; j++) {
+					if (j % 2 != 0) layout[i][j] = ' ';
 					else layout[i][j] = (Board.checkWall(i / 2, j / 2, i / 2 + 1, j / 2) ? hWall : ' ');
 				}
 			}
 			else {
-				for (j = 0; j < Board.WIDTH * 2 - 1; j++) {
-					if (j % 2) layout[i][j] = (Board.checkWall(i / 2, j / 2, i / 2, j / 2 + 1) ? vWall : ' ');
+				for (int j = 0; j < Board.WIDTH * 2 - 1; j++) {
+					if (j % 2 != 0) layout[i][j] = (Board.checkWall(i / 2, j / 2, i / 2, j / 2 + 1) ? vWall : ' ');
 					else layout[i][j] = emptyCell;
 				}
 			}
@@ -68,8 +69,32 @@ public class Quoridor {
 			return;
 		}
 
-		while (true) {
+        Scanner input = new Scanner(System.in);
+        quoridor.print();
+        for (int index = 0; ; index=(index+1)%quoridor.players.length) {
+            String actionType = input.next();
+            Action action = null;
+            try {
+                if (actionType.equals("w")) {
+                    action = new WallAction(new Wall(input.nextLine()));
+                }
+                else if (actionType.equals("s")) {
+                    action = new StepAction(Direction.makeDirection(input.nextLine()));
+                }
+            } catch (ActionFormatException e) {
+                System.out.println(e.getMessage());
+            }
 
-		}
+            quoridor.players[index].perform(action);
+            quoridor.print();
+
+            if (quoridor.players[index].hasWon()){
+                System.out.println("Winner: Player " + index);
+                break;
+            }
+        }
+
+        //wrong action exception
+        //play method
 	}
 }

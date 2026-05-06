@@ -6,12 +6,12 @@ public abstract class Player {
 	private Direction direction;
 
 	public Player() {
-		Piece = new Piece();
+		piece = new Piece();
 		wallCount = 10;
 	}
 
 	public Player(int x, int y, Direction direction) {
-		Piece = new Piece(x, y);
+		piece = new Piece(x, y);
 		wallCount = 10;
 		this.direction = direction;
 	}
@@ -40,6 +40,7 @@ public abstract class Player {
 		else {
 			System.exit(0); // to be finished
 		}
+        return true;
 	}
 
 	public boolean hasWon() {
@@ -53,6 +54,6 @@ public abstract class Player {
 			case RIGHT:
 				return piece.getY() == Board.WIDTH - 1;
 		}
-		// return true;
+        return true; //to be removed
 	}
 }

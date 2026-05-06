@@ -1,6 +1,6 @@
 package core;
 
-public class Wall implements Action {
+public class Wall {
 	private int x, y;
 	private boolean isVertical;
 
@@ -15,7 +15,7 @@ public class Wall implements Action {
 		String[] s = format.trim().split(" ");
 
 		if (s.length != 3)
-			throw ActionFormatException("Wrong number of tokens.");
+			throw new ActionFormatException("Wrong number of tokens.");
 
 		try {
 			x = Integer.parseInt(s[0]);
@@ -30,23 +30,23 @@ public class Wall implements Action {
 			case "h":
 				isVertical = false;
 			default:
-				throw ActionFormatException("Unable to interpret the direction of a wall.");
+				throw new ActionFormatException("Unable to interpret the direction of a wall.");
 		}
 	}
 
-	public getX() {
+	public int getX() {
 		return x;
 	}
 
-	public getY() {
+	public int getY() {
 		return y;
 	}
 
-	public getVertical() {
+	public boolean isVertical() {
 		return isVertical;
 	}
 
-	public Wall randomWall() {
+	public static Wall randomWall() {
 		boolean isVertical = (Math.random() < 0.5);
 		int x = (int)(Math.random() * (isVertical ? Board.HEIGHT : Board.HEIGHT - 1));
 		int y = (int)(Math.random() * (isVertical ? Board.WIDTH - 1 : Board.WIDTH));
