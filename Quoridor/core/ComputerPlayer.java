@@ -5,6 +5,10 @@ public class ComputerPlayer extends Player {
 		super(x, y, direction);
 	}
 	
+	public ComputerPlayer(Player player) {
+		super(player);
+	}
+	
 	public Action randomAction() {
 		Action action;
 		if (wallCount > 0 && Math.random() < 0.5) action = new WallAction(Wall.randomWall());

@@ -11,6 +11,10 @@ public abstract class Player {
 		this.wallCount = 10;
 	}
 	
+	public Player(Player player) {
+		this(player.getX(), player.getY(), player.getDirection());
+	}
+	
 	public int getX() {
 		return piece.getX();
 	}
