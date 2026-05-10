@@ -18,6 +18,8 @@ public class QuoridorGUI extends JFrame {
 			new Color(0xFFFF90)
 	};
 	
+	private static final Color defaultColor = new Color(0xE7ECFF);
+	
 	public QuoridorGUI() {
 		initializePlayers();
 		boardButtons = new JButton[Board.HEIGHT][Board.WIDTH];
@@ -25,18 +27,20 @@ public class QuoridorGUI extends JFrame {
 		
 		
 		setTitle("Quoridor");
-		setSize(700, 700);
+		setSize(10, 768);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		add(createControlPanel(), BorderLayout.WEST);
 		add(createBoardPanel(), BorderLayout.CENTER);
 		
+		pack();
+		
 		paintPlayers();
 	}
 	
 	private void paintPlayers() {
-		for (int i = 0; i < playerCount; i++)
-			boardButtons[players[i].getX()][players[i].getY()].setBackground(colors[i]);
+		for (int i = 0; i < 4; i++)
+			boardButtons[players[i].getX()][players[i].getY()].setBackground(i < playerCount ? colors[i] : defaultColor);
 	}
 	
 	private void initializePlayers() {
@@ -54,16 +58,16 @@ public class QuoridorGUI extends JFrame {
 		JPanel topPanel = new JPanel();
 		topPanel.setPreferredSize(new Dimension(0, 75));
 		JButton switchButton = new JButton("Mode: 2 Players");
-		switchButton.setBackground(new Color(0xE7E4FB));
+		switchButton.setBackground(defaultColor);
 		switchButton.setPreferredSize(new Dimension(200, 40));
 		topPanel.add(switchButton);
 		
-		JPanel playersPanel = new JPanel();
-		playersPanel.setLayout(new BoxLayout(playersPanel, BoxLayout.Y_AXIS));
 		
 		JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		JPanel row2 = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		
+		JPanel playersPanel = new JPanel();
+		playersPanel.setLayout(new BoxLayout(playersPanel, BoxLayout.Y_AXIS));
 		playersPanel.add(row1);
 		playersPanel.add(row2);
 		
@@ -98,6 +102,8 @@ public class QuoridorGUI extends JFrame {
 			playerButtons[2].setVisible(fourPlayers);
 			playerButtons[3].setVisible(fourPlayers);
 			
+			paintPlayers();
+			
 			if (fourPlayers) switchButton.setText("Mode: 4 Players"); // switch to 4
 			else switchButton.setText("Mode: 2 Players"); // switch to 2
 		});
@@ -125,26 +131,62 @@ public class QuoridorGUI extends JFrame {
 	}
 	
 	private JPanel createBoardPanel() {
-		JPanel boardPanel = new JPanel(new GridLayout(Board.HEIGHT, Board.WIDTH));
+		JPanel board = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
 		
-		for (int i = 0; i < Board.HEIGHT; i++) {
-			for (int j = 0; j < Board.WIDTH; j++) {
-				boardButtons[i][j] = new JButton();
-				int r = i, c = j;
-				boardButtons[i][j].addActionListener(e -> movePlayer(r, c));
-				boardPanel.add(boardButtons[i][j]);
+		int cell = 50;
+		int sep = 10;
+		
+		for (int r = 0; r < Board.HEIGHT * 2 - 1; r++) {
+			for (int c = 0; c < Board.WIDTH * 2 - 1; c++) {
+				gbc.gridx = c;
+				gbc.gridy = r;
+				
+				int i = r / 2, j = c / 2;
+				if (r % 2 == 0 && c % 2 == 0) {
+					boardButtons[i][j] = new JButton();
+					boardButtons[i][j].setBackground(defaultColor);
+					boardButtons[i][j].setPreferredSize(new Dimension(cell, cell));
+					boardButtons[i][j].addActionListener(e -> movePiece(i, j));
+					board.add(boardButtons[i][j], gbc);
+				}
+				else if (r % 2 == 0) {
+					JButton v = new JButton();
+					v.setBackground(defaultColor);
+					v.setPreferredSize(new Dimension(sep, cell));
+					v.addActionListener(e -> placeWall(i, j, true));
+					board.add(v, gbc);
+				}
+				else if (c % 2 == 0) {
+					JButton h = new JButton();
+					h.setBackground(defaultColor);
+					h.setPreferredSize(new Dimension(cell, sep));
+					h.addActionListener(e -> placeWall(i, j, false));
+					board.add(h, gbc);
+				}
+				else {
+					JPanel p = new JPanel();
+					p.setBackground(Color.WHITE);
+					p.setPreferredSize(new Dimension(sep, sep));
+					board.add(p, gbc);
+				}
 			}
 		}
 		
-		return boardPanel;
+		return board;
 	}
 	
-	private void movePlayer(int x, int y) {
+	private void movePiece(int x, int y) {
+	
+	}
+	
+	private void placeWall(int x, int y, boolean isVertical) {
 	
 	}
 	
 	public static void main(String[] args) {
 		QuoridorGUI gui = new QuoridorGUI();
+		gui.setLocationRelativeTo(null);
 		gui.setVisible(true);
 	}
 }

@@ -1,0 +1,18 @@
+access modifiers of: Direction, fields,
+packages: action, overall
+
+random or math.random
+
+how to initialize human players
+
+board class being static
+
+for gui a different thing will be used
+
+effectively final for lambdas
+
+make new player each time or store 8 players and reassign?
+
+the action interface
+
+resizing change
