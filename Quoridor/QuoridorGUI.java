@@ -135,7 +135,7 @@ public class QuoridorGUI extends JFrame {
 		GridBagConstraints gbc = new GridBagConstraints();
 		
 		int cell = 50;
-		int sep = 10;
+		int sep = 20;
 		
 		for (int r = 0; r < Board.HEIGHT * 2 - 1; r++) {
 			for (int c = 0; c < Board.WIDTH * 2 - 1; c++) {

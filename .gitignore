@@ -2,3 +2,4 @@
 /.idea
 *.iml
 Quoridor/Test.java
+*.class
