@@ -1,4 +1,12 @@
+package gui;
+
 import core.*;
+import core.action.StepAction;
+import core.exception.ActionFormatException;
+import core.exception.IllegalActionException;
+import core.player.ComputerPlayer;
+import core.player.HumanPlayer;
+import core.player.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,6 +16,7 @@ public class QuoridorGUI extends JFrame {
 	private int playerCount;
 	private boolean fourPlayers;
 	private int currentPlayer;
+	private int deadPlayerCount;
 	
 	private JButton[][] boardButtons;
 	JLabel currentPlayerLabel;
@@ -27,7 +36,7 @@ public class QuoridorGUI extends JFrame {
 		
 		
 		setTitle("Quoridor");
-		setSize(10, 768);
+		setSize(768, 768);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		add(createControlPanel(), BorderLayout.WEST);
@@ -39,8 +48,12 @@ public class QuoridorGUI extends JFrame {
 	}
 	
 	private void paintPlayers() {
-		for (int i = 0; i < 4; i++)
-			boardButtons[players[i].getX()][players[i].getY()].setBackground(i < playerCount ? colors[i] : defaultColor);
+		for (int i = 0; i < 4; i++) {
+			if (i < playerCount && !players[i].isDead())
+				boardButtons[players[i].getX()][players[i].getY()].setBackground(colors[i]);
+			else
+				boardButtons[players[i].getX()][players[i].getY()].setBackground(defaultColor);
+		}
 	}
 	
 	private void initializePlayers() {
@@ -52,6 +65,7 @@ public class QuoridorGUI extends JFrame {
 		playerCount = 2;
 		fourPlayers = false;
 		currentPlayer = 0;
+		deadPlayerCount = 0;
 	}
 	
 	private JPanel createControlPanel() {
@@ -60,8 +74,6 @@ public class QuoridorGUI extends JFrame {
 		JButton switchButton = new JButton("Mode: 2 Players");
 		switchButton.setBackground(defaultColor);
 		switchButton.setPreferredSize(new Dimension(200, 40));
-		topPanel.add(switchButton);
-		
 		
 		JPanel row1 = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 		JPanel row2 = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -108,6 +120,8 @@ public class QuoridorGUI extends JFrame {
 			else switchButton.setText("Mode: 2 Players"); // switch to 2
 		});
 		
+		topPanel.add(switchButton);
+		
 		JPanel modesPanel = new JPanel(new BorderLayout());
 		modesPanel.setPreferredSize(new Dimension(0, 200));
 		modesPanel.add(topPanel, BorderLayout.NORTH);
@@ -135,7 +149,7 @@ public class QuoridorGUI extends JFrame {
 		GridBagConstraints gbc = new GridBagConstraints();
 		
 		int cell = 50;
-		int sep = 20;
+		int sep = 15;
 		
 		for (int r = 0; r < Board.HEIGHT * 2 - 1; r++) {
 			for (int c = 0; c < Board.WIDTH * 2 - 1; c++) {
@@ -177,7 +191,35 @@ public class QuoridorGUI extends JFrame {
 	}
 	
 	private void movePiece(int x, int y) {
-	
+		Player p = players[currentPlayer];
+		StepAction s = null;
+		try {
+			s = new StepAction(Direction.makeDirection(p.getX(), p.getY(), x, y));
+		} catch (ActionFormatException e) {
+			ErrorWindow.showError(e.getMessage());
+		}
+		
+		try {
+			p.perform(s);
+		} catch (IllegalActionException e) {
+			ErrorWindow.showError(e.getMessage());
+		}
+		
+		for (int i = 0; i < playerCount; i++) {
+			if (i != currentPlayer && players[i].getX() == x && players[i].getY() == y) {
+				players[i].setDead();
+				deadPlayerCount--;
+			}
+		}
+		
+		//if (deadPlayerCount == playerCount - 1)
+		//ErrorWindow.winMessage(currentPlayer);
+		
+		do {
+			currentPlayer = (currentPlayer + 1) % playerCount;
+		} while (players[currentPlayer].isDead());
+		
+		paintPlayers();
 	}
 	
 	private void placeWall(int x, int y, boolean isVertical) {

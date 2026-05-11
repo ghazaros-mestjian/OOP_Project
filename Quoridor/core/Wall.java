@@ -1,5 +1,7 @@
 package core;
 
+import core.exception.ActionFormatException;
+
 public class Wall {
 	private final int x, y;
 	private final boolean isVertical;
@@ -13,7 +15,8 @@ public class Wall {
 	public Wall(String format) throws ActionFormatException {
 		String[] s = format.trim().split(" ");
 		
-		if (s.length != 3) throw new ActionFormatException("Cannot format wall: wrong number of tokens.");
+		if (s.length != 3)
+			throw new ActionFormatException("Cannot format wall: wrong number of tokens.");
 		
 		try {
 			x = Integer.parseInt(s[0].trim());

@@ -1,4 +1,4 @@
-package core;
+package core.exception;
 
 public class PlayerCountException extends Exception {
 	public PlayerCountException() {

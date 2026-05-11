@@ -1,4 +1,4 @@
-package core;
+package core.exception;
 
 public class ActionFormatException extends Exception {
 	public ActionFormatException() {

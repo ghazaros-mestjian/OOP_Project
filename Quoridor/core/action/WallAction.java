@@ -1,4 +1,6 @@
-package core;
+package core.action;
+
+import core.Wall;
 
 public class WallAction implements Action {
 	private final Wall wall;
@@ -9,10 +11,5 @@ public class WallAction implements Action {
 	
 	public Wall getWall() {
 		return wall;
-	}
-	
-	
-	public String getAction() {
-		return "wall";
 	}
 }

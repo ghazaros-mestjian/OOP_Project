@@ -1,5 +1,8 @@
 package core;
 
+import core.exception.IllegalActionException;
+import core.player.Player;
+
 public class Board {
 	public static final int HEIGHT = 9;
 	public static final int WIDTH = 9;
@@ -7,33 +10,31 @@ public class Board {
 	private static boolean[][] verticalWalls = new boolean[HEIGHT][WIDTH - 1];
 	private static boolean[][] horizontalWalls = new boolean[HEIGHT - 1][WIDTH];
 	
+	private Board() {
+	}
+	
 	public static boolean onBoard(int x, int y) {
 		return (0 <= x && x < HEIGHT && 0 <= y && y < WIDTH);
 	}
 	
 	public static boolean onBoard(Wall wall) {
-		return (wall.isVertical() ? (0 <= wall.getX() && wall.getX() < HEIGHT && 0 <= wall.getY() && wall.getY() < WIDTH - 1) : (0 <= wall.getX() && wall.getX() < HEIGHT - 1 && 0 <= wall.getY() && wall.getY() < WIDTH));
+		return wall.isVertical() ? (0 <= wall.getX() && wall.getX() < HEIGHT && 0 <= wall.getY() && wall.getY() < WIDTH - 1)
+		                         : (0 <= wall.getX() && wall.getX() < HEIGHT - 1 && 0 <= wall.getY() && wall.getY() < WIDTH);
 	}
 	
 	public static boolean checkWall(int x1, int y1, int x2, int y2) {
-		if (!onBoard(x1, y1) || !onBoard(x2, y2)) {
-			// or some error
+		if (!onBoard(x1, y1) || !onBoard(x2, y2))
 			return false;
-		}
-		if (Math.abs(x1 - x2) + Math.abs(y1 - y2) != 1) {
-			// maybe some error
+		if (Math.abs(x1 - x2) + Math.abs(y1 - y2) != 1)
 			return false;
-		}
-		return (x1 == x2 ? verticalWalls[x1][Math.min(y1, y2)] : horizontalWalls[Math.min(x1, x2)][y1]);
+		return x1 == x2 ? verticalWalls[x1][Math.min(y1, y2)]
+		                : horizontalWalls[Math.min(x1, x2)][y1];
 	}
 	
-	public void wallCheck(Wall wall, Player[] players) throws IllegalActionException {
+	public void checkWallValidity(Wall wall, Player[] players) throws IllegalActionException {
 		placeWall(wall);
 		
 		for (Player player : players) {
-			/*if (!onBoard(player.getX(), player.getY()))
-				return false;*/
-			
 			boolean[][] used = new boolean[HEIGHT][WIDTH];
 			dfs(player.getX(), player.getY(), used);
 			
@@ -90,9 +91,10 @@ public class Board {
 		}
 	}
 	
-	public static void removeWall(Wall wall) {
-		// our method, ok to leave like this?
-		if (wall.isVertical()) verticalWalls[wall.getX()][wall.getY()] = false;
-		else horizontalWalls[wall.getX()][wall.getY()] = false;
+	private static void removeWall(Wall wall) {
+		if (wall.isVertical())
+			verticalWalls[wall.getX()][wall.getY()] = false;
+		else
+			horizontalWalls[wall.getX()][wall.getY()] = false;
 	}
 }

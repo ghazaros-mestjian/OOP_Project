@@ -1,4 +1,12 @@
 import core.*;
+import core.action.Action;
+import core.action.StepAction;
+import core.action.WallAction;
+import core.exception.ActionFormatException;
+import core.exception.IllegalActionException;
+import core.exception.PlayerCountException;
+import core.player.HumanPlayer;
+import core.player.Player;
 
 import java.util.Scanner;
 

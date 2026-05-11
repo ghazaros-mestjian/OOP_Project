@@ -1,4 +1,6 @@
-package core;
+package core.action;
+
+import core.Direction;
 
 public class StepAction implements Action {
 	private final Direction direction;
@@ -9,9 +11,5 @@ public class StepAction implements Action {
 	
 	public Direction getDirection() {
 		return direction;
-	}
-	
-	public String getAction() {
-		return "step";
 	}
 }
