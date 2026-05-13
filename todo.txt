@@ -1,0 +1,4 @@
+win or error windows
+terminal
+computer players
+start/stop

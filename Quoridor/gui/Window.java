@@ -9,7 +9,7 @@ public class Window {
 		
 		JLabel label = new JLabel(message);
 		label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		label.setBackground(new Color(255, 200, 200));
+		label.setBackground(new Color(255, 144, 144));
 		label.setOpaque(true);
 		label.setFont(new Font("Arial", Font.PLAIN, 14));
 		
