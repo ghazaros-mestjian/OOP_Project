@@ -14,7 +14,7 @@ public class Piece {
 	public void move(Direction direction) throws IllegalActionException {
 		int nx = x + direction.dx;
 		int ny = y + direction.dy;
-		if (Board.onBoard(nx, ny))
+		if (!Board.onBoard(nx, ny))
 			throw new IllegalActionException("Cannot move the piece outside the board.");
 		if (Board.checkWall(x, y, nx, ny)) {
 			throw new IllegalActionException("Cannot jump over a wall.");
