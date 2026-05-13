@@ -31,37 +31,6 @@ public class Window {
 		timer.setRepeats(false);
 		timer.start();
 	}
-/*
-	public static void winMessage(int winner) {
-		JWindow window = new JWindow();
-
-		JLabel label = new JLabel(
-				"🎉 Player " + winner + " has won! Congratulations!",
-				SwingConstants.CENTER
-		);
-
-		label.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-		label.setBackground(new Color(200, 255, 200));
-		label.setOpaque(true);
-		label.setFont(new Font("Arial", Font.BOLD, 16));
-
-		window.add(label);
-
-		// small fixed size
-		window.setSize(320, 80);
-
-		// center on screen
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		int x = (screen.width - window.getWidth()) / 2;
-		int y = (screen.height - window.getHeight()) / 2;
-
-		window.setLocation(x, y);
-		window.setAlwaysOnTop(true);
-		window.setVisible(true);
-
-		// stays open until you close it manually later
-	}
- */
 
     public static void winMessage(int winner, Runnable onReplay, JFrame parent) {
         parent.setEnabled(false); // block game interaction
@@ -73,11 +42,11 @@ public class Window {
         panel.setBackground(new Color(255, 255, 255, 219));
 
         JLabel label = new JLabel(
-                "Player " + winner + " wins!",
+                "Player " + winner + " has won! Congratulations!",
                 SwingConstants.CENTER
         );
 
-        label.setFont(new Font("SansSerif", Font.BOLD, 18));
+        label.setFont(new Font("Arial", Font.PLAIN, 18));
         label.setForeground(new Color(0, 0, 0));
 
         JButton replay = new JButton("Play Again");
@@ -92,7 +61,7 @@ public class Window {
         });
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(245, 255, 245));
+        buttonPanel.setBackground(new Color(255, 255, 255));
         buttonPanel.add(replay);
 
         panel.add(label, BorderLayout.CENTER);

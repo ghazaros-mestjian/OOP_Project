@@ -43,10 +43,10 @@ public class QuoridorGUI extends JFrame {
     };
 
     private final ImageIcon[] playerIcons = {
-            resizeIcon("/gui/redPlayer.png", 40, 40),
-            resizeIcon("/gui/bluePlayer.png", 40, 40),
-            resizeIcon("/gui/greenPlayer.png", 40, 40),
-            resizeIcon("/gui/purplePlayer.png", 40, 40)
+            resizeIcon("/resources/redPlayer.png", 80, 80),
+            resizeIcon("/resources/bluePlayer.png", 80, 80),
+            resizeIcon("/resources/greenPlayer.png", 80, 80),
+            resizeIcon("/resources/yellowPlayer.png", 80, 80)
     };
 
     private static final Color defaultColor = new Color(0xE7ECFF);
