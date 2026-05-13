@@ -131,6 +131,12 @@ public class QuoridorGUI extends JFrame {
         }
     }
 
+    private void updateWallLabels() {
+        for (int i = 0; i < playerCount; i++) {
+            wallLabels[i].setText("Walls: " + players[i].getWallCount());
+        }
+    }
+
     private void initializePlayers() {
         players = new Player[4];
         players[0] = new HumanPlayer(Board.HEIGHT - 1, Board.WIDTH / 2, Direction.UP);
@@ -184,6 +190,8 @@ public class QuoridorGUI extends JFrame {
             playerButtons[i] = new JButton("Human");
             playerButtons[i].setBackground(colors[i]);
             playerButtons[i].setPreferredSize(new Dimension(100, 30));
+            wallLabels[i] = new JLabel("Walls: " + players[i].getWallCount());
+            wallLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
             int j = i;
             playerButtons[i].addActionListener(e -> {
                 if (players[j] instanceof HumanPlayer) {
@@ -195,10 +203,15 @@ public class QuoridorGUI extends JFrame {
                 }
             });
 
-            if (i < 2) row1.add(playerButtons[i]);
+            if (i < 2) {
+                row1.add(playerButtons[i]);
+                row1.add(wallLabels[i]);
+            }
             else {
                 row2.add(playerButtons[i]);
+                row2.add(wallLabels[i]);
                 playerButtons[i].setVisible(fourPlayers);
+                wallLabels[i].setVisible(fourPlayers);
             }
         }
 
@@ -208,7 +221,10 @@ public class QuoridorGUI extends JFrame {
 
             playerButtons[2].setVisible(fourPlayers);
             playerButtons[3].setVisible(fourPlayers);
+            wallLabels[2].setVisible(fourPlayers);
+            wallLabels[3].setVisible(fourPlayers);
 
+            updateWallLabels();
             paintPlayers();
 
             if (fourPlayers) switchButton.setText("Mode: 4 Players"); // switch to 4
@@ -242,6 +258,7 @@ public class QuoridorGUI extends JFrame {
     private JPanel createBoardPanel() {
         JPanel board = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+
 
         int cell = 50;
         int sep = 15;
@@ -291,7 +308,7 @@ public class QuoridorGUI extends JFrame {
             s = new StepAction(Direction.makeDirection(p.getX(), p.getY(), x, y));
             p.perform(s);
         } catch (ActionFormatException | IllegalActionException e) {
-            ErrorWindow.showError(e.getMessage());
+            Window.errorMessage(e.getMessage());
             return;
         }
 
@@ -303,7 +320,7 @@ public class QuoridorGUI extends JFrame {
         }
 
         if (deadPlayerCount == playerCount - 1 || p.hasWon()) {
-            Window.winMessage(currentPlayer + 1);
+            Window.winMessage(currentPlayer + 1, () -> resetGame(), this);
             return;
         }
 
@@ -322,8 +339,9 @@ public class QuoridorGUI extends JFrame {
         try {
             Board.checkWallValidity(w, Arrays.copyOf(players, playerCount));
             p.perform(wa);
+            updateWallLabels();
         } catch (IllegalActionException e) {
-            ErrorWindow.showError(e.getMessage());
+            Window.errorMessage(e.getMessage());
             assert(false);
             return;
         }
@@ -334,6 +352,36 @@ public class QuoridorGUI extends JFrame {
 
         paintWalls();
         paintPlayers();
+    }
+
+    private void resetGame() {
+        initializePlayers();
+        currentPlayer = 0;
+        deadPlayerCount = 0;
+
+        for (int r = 0; r < Board.HEIGHT; r++) {
+            for (int c = 0; c < Board.WIDTH; c++) {
+                boardButtons[r][c].setIcon(null);
+                boardButtons[r][c].setBorder(NORMAL_BORDER);
+                boardButtons[r][c].setBackground(defaultColor);
+            }
+        }
+
+        for (int i = 0; i < Board.HEIGHT; i++) {
+            for (int j = 0; j < Board.WIDTH - 1; j++) {
+                verticalWButtons[i][j].setBackground(defaultColor);
+            }
+        }
+
+        for (int i = 0; i < Board.HEIGHT - 1; i++) {
+            for (int j = 0; j < Board.WIDTH; j++) {
+                horizontalWButtons[i][j].setBackground(defaultColor);
+            }
+        }
+
+        paintPlayers();
+        paintWalls();
+        updateWallLabels();
     }
 
     public static void main(String[] args) {
