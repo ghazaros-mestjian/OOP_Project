@@ -302,8 +302,10 @@ public class QuoridorGUI extends JFrame {
             }
         }
 
-        //if (deadPlayerCount == playerCount - 1)
-        //ErrorWindow.winMessage(currentPlayer);
+        if (deadPlayerCount == playerCount - 1 || p.hasWon()) {
+            Window.winMessage(currentPlayer + 1);
+            return;
+        }
 
         do {
             currentPlayer = (currentPlayer + 1) % playerCount;
