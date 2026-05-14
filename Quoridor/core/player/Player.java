@@ -5,20 +5,22 @@ import core.action.*;
 import core.exception.IllegalActionException;
 
 public abstract class Player {
+	String name;
 	private final Piece piece;
 	private final Direction direction;
 	private int wallCount;
 	private boolean dead;
 	
-	public Player(int x, int y, Direction direction) {
+	public Player(String name, int x, int y, Direction direction) {
+		this.name = name;
 		this.piece = new Piece(x, y);
 		this.direction = direction;
 		this.wallCount = 10;
 		this.dead = false;
 	}
 	
-	public Player(Player player) {
-		this(player.getX(), player.getY(), player.getDirection());
+	public String getName() {
+		return name;
 	}
 	
 	public int getX() {
@@ -46,15 +48,13 @@ public abstract class Player {
 	}
 	
 	public void perform(Action action) throws IllegalActionException {
-		if (action instanceof StepAction) {
-			StepAction stepAction = (StepAction)action;
+		if (action instanceof StepAction stepAction) {
 			piece.move(stepAction.getDirection());
 		}
-		else if (action instanceof WallAction) {
+		else if (action instanceof WallAction wallAction) {
 			if (wallCount == 0)
 				throw new IllegalActionException("Cannot place a wall: not enough walls.");
 			
-			WallAction wallAction = (WallAction)action;
 			Board.placeWall(wallAction.getWall());
 			wallCount--;
 		}

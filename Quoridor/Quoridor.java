@@ -23,12 +23,12 @@ public class Quoridor {
 		
 		players = new Player[playerCount];
 		
-		players[0] = new HumanPlayer(Board.HEIGHT - 1, Board.WIDTH / 2, Direction.UP);
-		players[1] = new HumanPlayer(0, Board.WIDTH / 2, Direction.DOWN);
+		players[0] = new HumanPlayer("Player 1", Board.HEIGHT - 1, Board.WIDTH / 2, Direction.UP);
+		players[1] = new HumanPlayer("Player 2", 0, Board.WIDTH / 2, Direction.DOWN);
 		
 		if (playerCount == 4) {
-			players[2] = new HumanPlayer(Board.HEIGHT / 2, 0, Direction.LEFT);
-			players[3] = new HumanPlayer(Board.HEIGHT / 2, Board.WIDTH - 1, Direction.RIGHT);
+			players[2] = new HumanPlayer("Player 3", Board.HEIGHT / 2, 0, Direction.LEFT);
+			players[3] = new HumanPlayer("Player 4", Board.HEIGHT / 2, Board.WIDTH - 1, Direction.RIGHT);
 		}
 	}
 	
@@ -77,7 +77,7 @@ public class Quoridor {
 			}
 			
 			if (players[index].hasWon()) {
-				System.out.println("Winner: Player " + index);
+				System.out.println("Winner: " + players[index].getName());
 				break;
 			}
 		}

@@ -5,17 +5,17 @@ import core.Wall;
 import core.action.*;
 
 public class ComputerPlayer extends Player {
-	public ComputerPlayer(int x, int y, Direction direction) {
-		super(x, y, direction);
+	public ComputerPlayer(String name, int x, int y, Direction direction) {
+		super(name, x, y, direction);
 	}
 	
-	public ComputerPlayer(Player player) {
-		super(player);
+	public ComputerPlayer(String name, Player player) {
+		super(name, player.getX(), player.getY(), player.getDirection());
 	}
 	
 	public Action randomAction() {
 		Action action;
-		if (getWallCount() > 0 && Math.random() < 0.5)
+		if (getWallCount() > 0 && Math.random() < 0.33)
 			action = new WallAction(Wall.randomWall());
 		else {
 			Direction[] d = Direction.values();

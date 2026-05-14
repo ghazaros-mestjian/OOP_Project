@@ -51,6 +51,8 @@ public class Board {
 		placeWall(wall);
 		
 		for (Player player : players) {
+			if (player.isDead()) continue;
+			
 			boolean[][] used = new boolean[HEIGHT][WIDTH];
 			dfs(player.getX(), player.getY(), used);
 			

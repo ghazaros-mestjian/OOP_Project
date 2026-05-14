@@ -14,10 +14,10 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class QuoridorGUI extends JFrame {
-	private final Player[] players = { new HumanPlayer(Board.HEIGHT - 1, Board.WIDTH / 2, Direction.UP),
-			new HumanPlayer(0, Board.WIDTH / 2, Direction.DOWN),
-			new HumanPlayer(Board.HEIGHT / 2, Board.WIDTH - 1, Direction.LEFT),
-			new HumanPlayer(Board.HEIGHT / 2, 0, Direction.RIGHT),
+	private final Player[] players = { new HumanPlayer("Player 1", Board.HEIGHT - 1, Board.WIDTH / 2, Direction.UP),
+			new HumanPlayer("Player 2", 0, Board.WIDTH / 2, Direction.DOWN),
+			new HumanPlayer("Player 3", Board.HEIGHT / 2, Board.WIDTH - 1, Direction.LEFT),
+			new HumanPlayer("Player 4", Board.HEIGHT / 2, 0, Direction.RIGHT),
 	};
 	private int playerCount = 2;
 	private boolean fourPlayers = false;
@@ -25,6 +25,7 @@ public class QuoridorGUI extends JFrame {
 	private int deadPlayerCount = 0;
 	
 	private boolean gameStarted = false;
+	private boolean computerTurn = false;
 	
 	private static final Border ACTIVE_BORDER =
 			BorderFactory.createLineBorder(Color.BLACK, 4);
@@ -36,20 +37,12 @@ public class QuoridorGUI extends JFrame {
 	private final JButton[][] horizontalWButtons = new JButton[Board.HEIGHT - 1][Board.WIDTH];
 	
 	private final JLabel[] wallLabels = new JLabel[4];
-    private final JPanel[] playerField = new JPanel[4];
-
-    private String[] playerNames = {
-            "Player 1",
-            "Player 2",
-            "Player 3",
-            "Player 4"
-    };
+	private final JPanel[] playerField = new JPanel[4];
 	
-	private static final Color[] colors = {
-            new Color(0xFA3B3D),
-			new Color(0x2251CB),
-			new Color(0x5FBC00),
-			new Color(0xFBE700)
+	private static final Color[] colors = { new Color(0xFF9090),
+			new Color(0x9090FF),
+			new Color(0x90FF90),
+			new Color(0xFFFF90)
 	};
 	private static final Color defaultColor = new Color(0xE7ECFF);
 	
@@ -68,23 +61,18 @@ public class QuoridorGUI extends JFrame {
 		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		JPanel startScreen = startGamePanel();
 		JPanel gameScreen = new JPanel(new BorderLayout());
-		startScreen.setBackground(defaultColor);
-		gameScreen.add(createControlPanel(), BorderLayout.WEST);
+		gameScreen.add(createInfoPanel(), BorderLayout.WEST);
 		gameScreen.add(createBoardPanel(), BorderLayout.CENTER);
 		
-		add(startScreen, "start");
-        add(createSetupPanel(), "setup");
+		add(createStartPanel(), "start");
+		add(createSetupPanel(), "setup");
 		add(gameScreen, "game");
 		
 		CardLayout cl = (CardLayout)getContentPane().getLayout();
 		cl.show(getContentPane(), "start");
 		
 		pack();
-		
-		paintPlayers();
-		paintWalls();
 	}
 	
 	private ImageIcon resizeIcon(String path, int width, int height) {
@@ -118,171 +106,166 @@ public class QuoridorGUI extends JFrame {
 	private void paintWalls() {
 		for (int i = 0; i < Board.HEIGHT; i++) {
 			for (int j = 0; j < Board.WIDTH; j++) {
-				if (Board.checkWall(i, j, true))
-					verticalWButtons[i][j].setBackground(Color.DARK_GRAY);
+				if (j < Board.WIDTH - 1)
+					verticalWButtons[i][j].setBackground(Board.checkWall(i, j, true) ? Color.DARK_GRAY : defaultColor);
 				
-				if (Board.checkWall(i, j, false)) {
-					horizontalWButtons[i][j].setBackground(Color.DARK_GRAY);
-				}
+				if (i < Board.HEIGHT - 1)
+					horizontalWButtons[i][j].setBackground(Board.checkWall(i, j, false) ? Color.DARK_GRAY : defaultColor);
 			}
 		}
 	}
-
-    private void updateWallLabels() {
-        for (int i = 0; i < playerCount; i++) {
-            if (players[i].isDead())
-                wallLabels[i].setText(playerNames[i] + " - Dead");
-            else
-                wallLabels[i].setText(
-                        playerNames[i] + " - Walls: " + players[i].getWallCount()
-                );
-        }
-    }
 	
-	private JPanel startGamePanel() {
+	private void updateWallLabels() {
+		for (int i = 0; i < playerCount; i++) {
+			if (players[i].isDead())
+				wallLabels[i].setText(players[i].getName() + " - Dead");
+			else
+				wallLabels[i].setText(players[i].getName() + " - Walls: " + players[i].getWallCount());
+		}
+	}
+	
+	private JPanel createStartPanel() {
 		JPanel startScreen = new JPanel(new BorderLayout());
-		startScreen.setBackground(Color.DARK_GRAY);
 		
 		JButton playButton = new JButton(startIcon);
 		playButton.setBounds(250, 200, 500, 500);
 		playButton.setBorderPainted(false);
 		playButton.setFocusPainted(false);
-
-        playButton.addActionListener(e -> {
-            ((CardLayout)getContentPane().getLayout()).show(getContentPane(), "setup");
-        });
+		
+		playButton.addActionListener(e -> {
+			((CardLayout)getContentPane().getLayout()).show(getContentPane(), "setup");
+		});
 		
 		startScreen.add(playButton);
 		
 		return startScreen;
 	}
-
-    private JPanel createSetupPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        JButton switchButton = new JButton("Mode: 2 Players");
-        switchButton.setBackground(defaultColor);
-        switchButton.setPreferredSize(new Dimension(200, 40));
-
-        JPanel playersPanel = new JPanel((new GridLayout(2, 2, 20, 20)));
-
-        JPanel[] playerRows = new JPanel[4];
-        JButton[] playerButtons = new JButton[4];
-        JTextField[] nameFields = new JTextField[4];
-        JPanel[] nameRows = new JPanel[4];
-
-        for (int i = 0; i < 4; i++) {
-            playerRows[i] = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
-            nameRows[i] = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 5));
-
-            playerButtons[i] = new JButton("Human");
-            playerButtons[i].setBackground(colors[i]);
-            playerButtons[i].setPreferredSize(new Dimension(100, 30));
-
-            int j = i;
-            playerButtons[i].addActionListener(e -> {
-                if (players[j] instanceof HumanPlayer) {
-                    players[j] = new ComputerPlayer(players[j]);
-                    playerButtons[j].setText("Computer");
-                    nameFields[j].setEditable(false);
-                }
-                else {
-                    players[j] = new HumanPlayer(players[j]);
-                    playerButtons[j].setText("Human");
-                    nameFields[j].setEditable(true);
-                }
-            });
-
-            playerRows[j].add(playerButtons[j]);
-            nameRows[j].add(new JLabel("Player " + (j + 1) + ":"));
-            nameFields[j] = new JTextField(playerNames[j], 12);
-            nameRows[j].add(nameFields[j]);
-
-            if (i >= 2){
-                playerRows[i].setVisible(fourPlayers);
-                nameRows[i].setVisible(fourPlayers);
-            }
-
-            playersPanel.add(playerRows[i]);
-            playersPanel.add(nameRows[i]);
-        }
-
-        switchButton.addActionListener(e -> {
-            playerCount = 6 - playerCount;
-            fourPlayers = !fourPlayers;
-
-            for (int i = 2; i < 4; i++) {
-                playerRows[i].setVisible(fourPlayers);
-                nameRows[i].setVisible(fourPlayers);
-            }
-
-            playersPanel.revalidate();
-            playersPanel.repaint();
-
-            paintPlayers();
-
-            if (fourPlayers) switchButton.setText("Mode: 4 Players");
-            else switchButton.setText("Mode: 2 Players");
-        });
-
-        JPanel topPanel = new JPanel();
-        topPanel.setPreferredSize(new Dimension(0, 75));
-        topPanel.add(switchButton);
-
-        JPanel center = new JPanel();
-        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-
-        JPanel modesPanel = new JPanel(new BorderLayout());
-        modesPanel.setPreferredSize(new Dimension(0, 300));
-        modesPanel.add(topPanel, BorderLayout.NORTH);
-        modesPanel.add(playersPanel, BorderLayout.CENTER);
-
-        JPanel bottomPanel = new JPanel();
-        JButton startButton = new JButton("Start Game");
-        startButton.setPreferredSize(new Dimension(200, 50));
-
-        startButton.addActionListener(e -> {
-            gameStarted = true;
-            paintPlayers();
-
-            for (int i = 0; i < 4; i++) {
-                playerNames[i] = nameFields[i].getText();
-                playerField[i].setVisible(i < playerCount);
-                wallLabels[i].setText(playerNames[i] + " - Walls: " + players[i].getWallCount());
-            }
-
-            ((CardLayout) getContentPane().getLayout()).show(getContentPane(), "game");
-        });
-
-        bottomPanel.add(startButton);
-
-        JPanel controlPanel = new JPanel(new BorderLayout());
-        controlPanel.setPreferredSize(new Dimension(250, 0));
-        controlPanel.add(modesPanel, BorderLayout.CENTER);
-        controlPanel.add(bottomPanel, BorderLayout.SOUTH);
-
-        return controlPanel;
-    }
 	
-	private JPanel createControlPanel() {
+	private JPanel createSetupPanel() {
+		JButton switchButton = new JButton("Mode: 2 Players");
+		switchButton.setBackground(defaultColor);
+		switchButton.setPreferredSize(new Dimension(200, 40));
+		
+		JPanel playersPanel = new JPanel((new GridLayout(4, 2, 20, 20)));
+		
+		JPanel[] playerRows = new JPanel[4];
+		JButton[] playerButtons = new JButton[4];
+		JTextField[] nameFields = new JTextField[4];
+		JPanel[] nameRows = new JPanel[4];
+		
+		for (int i = 0; i < 4; i++) {
+			playerButtons[i] = new JButton("Human");
+			playerButtons[i].setBackground(colors[i]);
+			playerButtons[i].setPreferredSize(new Dimension(100, 30));
+			
+			int j = i;
+			playerButtons[i].addActionListener(e -> {
+				if (players[j] instanceof HumanPlayer) {
+					players[j] = new ComputerPlayer("Computer " + (j + 1), players[j]);
+					playerButtons[j].setText("Computer");
+					nameFields[j].setText(players[j].getName());
+					nameFields[j].setEditable(false);
+				}
+				else {
+					players[j] = new HumanPlayer("Player " + (j + 1), players[j]);
+					playerButtons[j].setText("Human");
+					nameFields[j].setText(players[j].getName());
+					nameFields[j].setEditable(true);
+				}
+			});
+			
+			playerRows[i] = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 10));
+			playerRows[i].add(playerButtons[i]);
+			nameRows[i] = new JPanel(new FlowLayout(FlowLayout.CENTER, 30, 5));
+			nameRows[i].add(new JLabel("Player " + (i + 1) + ":"));
+			nameFields[i] = new JTextField(players[i].getName(), 12);
+			nameRows[i].add(nameFields[j]);
+			
+			if (i >= 2) {
+				playerRows[i].setVisible(fourPlayers);
+				nameRows[i].setVisible(fourPlayers);
+			}
+			
+			playersPanel.add(playerRows[i]);
+			playersPanel.add(nameRows[i]);
+		}
+		
+		switchButton.addActionListener(e -> {
+			playerCount = 6 - playerCount;
+			fourPlayers = !fourPlayers;
+			
+			for (int i = 2; i < 4; i++) {
+				playerRows[i].setVisible(fourPlayers);
+				nameRows[i].setVisible(fourPlayers);
+			}
+			
+			playersPanel.revalidate();
+			playersPanel.repaint();
+			
+			paintPlayers();
+			
+			if (fourPlayers) switchButton.setText("Mode: 4 Players");
+			else switchButton.setText("Mode: 2 Players");
+		});
+		
+		JPanel topPanel = new JPanel();
+		topPanel.setPreferredSize(new Dimension(0, 75));
+		topPanel.add(switchButton);
+		
+		JPanel center = new JPanel();
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+		
+		JPanel bottomPanel = new JPanel();
+		JButton startButton = new JButton("Start Game");
+		startButton.setPreferredSize(new Dimension(200, 50));
+		
+		startButton.addActionListener(e -> {
+			gameStarted = true;
+			paintPlayers();
+			paintWalls();
+			
+			for (int i = 0; i < 4; i++) {
+				if (players[i] instanceof HumanPlayer hp)
+					hp.setName(nameFields[i].getText());
+				playerField[i].setVisible(i < playerCount);
+				updateWallLabels();
+			}
+			
+			((CardLayout)getContentPane().getLayout()).show(getContentPane(), "game");
+			
+			processNext();
+		});
+		
+		bottomPanel.add(startButton);
+		
+		JPanel controlPanel = new JPanel(new BorderLayout());
+		controlPanel.setPreferredSize(new Dimension(250, 0));
+		controlPanel.add(topPanel, BorderLayout.NORTH);
+		controlPanel.add(playersPanel, BorderLayout.CENTER);
+		controlPanel.add(bottomPanel, BorderLayout.SOUTH);
+		
+		return controlPanel;
+	}
+	
+	private JPanel createInfoPanel() {
 		JPanel playersPanel = new JPanel();
 		playersPanel.setLayout(new BoxLayout(playersPanel, BoxLayout.Y_AXIS));
-
+		
 		for (int i = 0; i < 4; i++) {
 			playerField[i] = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-
-            wallLabels[i] = new JLabel(playerNames[i] + " - Walls: " + players[i].getWallCount());
-            wallLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
-            wallLabels[i].setOpaque(true);
-            wallLabels[i].setBackground(colors[i]);
-
+			
+			wallLabels[i] = new JLabel(players[i].getName() + " - Walls: " + players[i].getWallCount(), SwingConstants.CENTER);
+			wallLabels[i].setPreferredSize(new Dimension(200, 30));
+			wallLabels[i].setHorizontalAlignment(SwingConstants.CENTER);
+			wallLabels[i].setOpaque(true);
+			wallLabels[i].setBackground(colors[i]);
+			
 			playerField[i].add(wallLabels[i]);
-            playerField[i].setVisible(i < playerCount);
-
+			playerField[i].setVisible(i < playerCount);
+			
 			playersPanel.add(playerField[i]);
-
 		}
-
+		
 		JPanel modesPanel = new JPanel(new BorderLayout());
 		modesPanel.setPreferredSize(new Dimension(0, 400));
 		modesPanel.add(playersPanel, BorderLayout.CENTER);
@@ -291,12 +274,7 @@ public class QuoridorGUI extends JFrame {
 		JButton stopButton = new JButton("Reset");
 		stopButton.setPreferredSize(new Dimension(200, 50));
 		
-		stopButton.addActionListener(e -> {
-            gameStarted = false;
-            ((CardLayout)getContentPane().getLayout())
-                    .show(getContentPane(), "setup");
-
-        });
+		stopButton.addActionListener(e -> resetGame());
 		
 		bottomPanel.add(stopButton);
 		
@@ -323,26 +301,32 @@ public class QuoridorGUI extends JFrame {
 				int i = r / 2, j = c / 2;
 				if (r % 2 == 0 && c % 2 == 0) {
 					boardButtons[i][j] = new JButton();
-					//boardButtons[i][j].setEnabled(false);
 					boardButtons[i][j].setBackground(defaultColor);
 					boardButtons[i][j].setPreferredSize(new Dimension(cell, cell));
-					boardButtons[i][j].addActionListener(e -> movePiece(i, j));
+					boardButtons[i][j].addActionListener(e -> {
+						if (!computerTurn)
+							movePiece(i, j);
+					});
 					board.add(boardButtons[i][j], gbc);
 				}
 				else if (r % 2 == 0) {
 					verticalWButtons[i][j] = new JButton();
-					//verticalWButtons[i][j].setEnabled(false);
 					verticalWButtons[i][j].setBackground(defaultColor);
 					verticalWButtons[i][j].setPreferredSize(new Dimension(sep, cell));
-					verticalWButtons[i][j].addActionListener(e -> placeWall(i, j, true));
+					verticalWButtons[i][j].addActionListener(e -> {
+						if (!computerTurn)
+							placeWall(new Wall(i, j, true));
+					});
 					board.add(verticalWButtons[i][j], gbc);
 				}
 				else if (c % 2 == 0) {
 					horizontalWButtons[i][j] = new JButton();
-					//horizontalWButtons[i][j].setEnabled(false);
 					horizontalWButtons[i][j].setBackground(defaultColor);
 					horizontalWButtons[i][j].setPreferredSize(new Dimension(cell, sep));
-					horizontalWButtons[i][j].addActionListener(e -> placeWall(i, j, false));
+					horizontalWButtons[i][j].addActionListener(e -> {
+						if (!computerTurn)
+							placeWall(new Wall(i, j, false));
+					});
 					board.add(horizontalWButtons[i][j], gbc);
 				}
 				else {
@@ -357,8 +341,35 @@ public class QuoridorGUI extends JFrame {
 		return board;
 	}
 	
-	private void movePiece(int x, int y) {
-		if (!gameStarted) return;
+	private void processNext() {
+		computerTurn = false;
+		
+		if (players[currentPlayer] instanceof ComputerPlayer cp) {
+			computerTurn = true;
+			
+			Timer timer = new Timer(1200, e -> {
+				while (true) {
+					core.action.Action action = cp.randomAction();
+					if (action instanceof StepAction sa) {
+						if (movePiece(cp.getX() + sa.getDirection().dx, cp.getY() + sa.getDirection().dy)) break;
+					}
+					else if (action instanceof WallAction wa) {
+						if (placeWall(wa.getWall())) break;
+					}
+					else { // unexpected error
+						Window.errorMessage("Unexpected Error!", this);
+						break;
+					}
+				}
+			});
+			
+			timer.setRepeats(false);
+			timer.start();
+		}
+	}
+	
+	private boolean movePiece(int x, int y) {
+		if (!gameStarted) return false;
 		
 		Player p = players[currentPlayer];
 		StepAction sa = null;
@@ -366,8 +377,8 @@ public class QuoridorGUI extends JFrame {
 			sa = new StepAction(Direction.makeDirection(p.getX(), p.getY(), x, y));
 			p.perform(sa);
 		} catch (ActionFormatException | IllegalActionException e) {
-			Window.errorMessage(e.getMessage());
-			return;
+			if (!computerTurn) Window.errorMessage(e.getMessage(), this);
+			return false;
 		}
 		
 		for (int i = 0; i < playerCount; i++) {
@@ -381,8 +392,9 @@ public class QuoridorGUI extends JFrame {
 		
 		if (deadPlayerCount == playerCount - 1 || p.hasWon()) {
 			paintPlayers();
-            Window.winMessage(playerNames[currentPlayer], () -> resetGame(), this);
-			return;
+			setEnabled(false);
+			Window.winMessage(players[currentPlayer].getName(), () -> resetGame(), this);
+			return true;
 		}
 		
 		do {
@@ -390,20 +402,23 @@ public class QuoridorGUI extends JFrame {
 		} while (players[currentPlayer].isDead());
 		
 		paintPlayers();
+		
+		processNext();
+		
+		return true;
 	}
 	
-	private void placeWall(int x, int y, boolean isVertical) {
-		if (!gameStarted) return;
+	private boolean placeWall(Wall w) {
+		if (!gameStarted) return false;
 		
 		Player p = players[currentPlayer];
-		Wall w = new Wall(x, y, isVertical);
 		WallAction wa = new WallAction(w);
 		try {
 			Board.checkWallValidity(w, Arrays.copyOf(players, playerCount));
 			p.perform(wa);
 		} catch (IllegalActionException e) {
-			Window.errorMessage(e.getMessage());
-			return;
+			if (!computerTurn) Window.errorMessage(e.getMessage(), this);
+			return false;
 		}
 		
 		updateWallLabels();
@@ -414,6 +429,10 @@ public class QuoridorGUI extends JFrame {
 		} while (players[currentPlayer].isDead());
 		
 		paintPlayers();
+		
+		processNext();
+		
+		return true;
 	}
 	
 	private void resetGame() {
