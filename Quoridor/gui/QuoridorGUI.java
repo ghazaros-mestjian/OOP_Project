@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class QuoridorGUI extends JFrame {
+	private final int COMPUTER_TURN_TIME = 1200;
 	private final Player[] players = { new HumanPlayer("Player 1", Board.HEIGHT - 1, Board.WIDTH / 2, Direction.UP),
 			new HumanPlayer("Player 2", 0, Board.WIDTH / 2, Direction.DOWN),
 			new HumanPlayer("Player 3", Board.HEIGHT / 2, Board.WIDTH - 1, Direction.LEFT),
@@ -347,7 +348,7 @@ public class QuoridorGUI extends JFrame {
 		if (players[currentPlayer] instanceof ComputerPlayer cp) {
 			computerTurn = true;
 			
-			Timer timer = new Timer(1200, e -> {
+			Timer timer = new Timer(COMPUTER_TURN_TIME, e -> {
 				while (true) {
 					core.action.Action action = cp.randomAction();
 					if (action instanceof StepAction sa) {
