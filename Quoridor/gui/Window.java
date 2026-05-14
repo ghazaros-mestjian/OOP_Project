@@ -32,7 +32,7 @@ public class Window {
 		timer.start();
 	}
 
-    public static void winMessage(int winner, Runnable onReplay, JFrame parent) {
+    public static void winMessage(String winner, Runnable onReplay, JFrame parent) {
         parent.setEnabled(false); // block game interaction
 
         JWindow window = new JWindow();
@@ -41,8 +41,7 @@ public class Window {
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         panel.setBackground(new Color(255, 255, 255, 219));
 
-        JLabel label = new JLabel(
-                "Player " + winner + " has won! Congratulations!",
+        JLabel label = new JLabel(winner + " has won! Congratulations!",
                 SwingConstants.CENTER
         );
 
