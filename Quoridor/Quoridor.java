@@ -12,29 +12,29 @@ import java.util.Scanner;
 
 public class Quoridor {
 	private Player[] players;
-	
+
 	private static final char vWall = '|';
 	private static final char hWall = '\u2014';
 	private static final char emptyCell = '\u00B7';
-	
+
 	public Quoridor(int playerCount) throws PlayerCountException {
 		if (playerCount != 2 && playerCount != 4)
 			throw new PlayerCountException("Wrong number of players: " + playerCount + ".");
-		
+
 		players = new Player[playerCount];
-		
+
 		players[0] = new HumanPlayer("Player 1", Board.HEIGHT - 1, Board.WIDTH / 2, Direction.UP);
 		players[1] = new HumanPlayer("Player 2", 0, Board.WIDTH / 2, Direction.DOWN);
-		
+
 		if (playerCount == 4) {
 			players[2] = new HumanPlayer("Player 3", Board.HEIGHT / 2, 0, Direction.LEFT);
 			players[3] = new HumanPlayer("Player 4", Board.HEIGHT / 2, Board.WIDTH - 1, Direction.RIGHT);
 		}
 	}
-	
+
 	public void print() {
 		char[][] layout = new char[Board.HEIGHT * 2 - 1][Board.WIDTH * 2 - 1];
-		
+
 		for (int i = 0; i < Board.HEIGHT * 2 - 1; i++) {
 			if (i % 2 != 0) {
 				for (int j = 0; j < Board.WIDTH * 2 - 1; j++) {
@@ -49,22 +49,22 @@ public class Quoridor {
 				}
 			}
 		}
-		
+
 		for (Player p : players) layout[p.getX() * 2][p.getY() * 2] = p.getDirection().name().charAt(0);
-		
+
 		for (char[] row : layout) {
 			for (char c : row) System.out.print(c);
 			System.out.println();
 		}
 	}
-	
+
 	public void play() {
 		Scanner input = new Scanner(System.in);
-		
+
 		print();
 		for (int index = 0; ; index = (index + 1) % players.length) {
 			String actionType = input.next().trim();
-			
+
 			Action action;
 			try {
 				if (actionType.equals("wall")) action = new WallAction(new Wall(input.nextLine()));
@@ -75,20 +75,20 @@ public class Quoridor {
 			} catch (ActionFormatException | IllegalActionException e) {
 				System.out.println(e.getMessage());
 			}
-			
+
 			if (players[index].hasWon()) {
 				System.out.println("Winner: " + players[index].getName());
 				break;
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		if (args.length != 1) {
 			System.out.println("Usage: java Quoridor.java NumberOfPlayers.");
 			return;
 		}
-		
+
 		Quoridor quoridor;
 		try {
 			int playerCount = Integer.parseInt(args[0]);
@@ -100,7 +100,7 @@ public class Quoridor {
 			System.out.println(e.getMessage());
 			return;
 		}
-		
+
 		quoridor.play();
 	}
 }
